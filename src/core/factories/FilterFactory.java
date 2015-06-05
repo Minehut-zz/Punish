@@ -3,8 +3,6 @@ package core.factories;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import core.Punish;
-
 public class FilterFactory {
 	
 	private final String IPADDRESS_PATTERN = 

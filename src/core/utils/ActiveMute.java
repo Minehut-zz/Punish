@@ -16,14 +16,10 @@ public class ActiveMute {
 	public String reason, staff;
 	
 	public boolean expired() {
-		if (this.start < 0) {
+		if (this.start < 0)
 			return false;
-		}
-		
-		if (Punish.getSecondsFromDate(new Date(start)) >= this.lengthSeconds) {
+		if (Punish.getSecondsFromDate(new Date(start)) >= this.lengthSeconds) 
 			return true;
-		}
-		
 		return false;
 	}
 	

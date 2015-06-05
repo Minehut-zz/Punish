@@ -14,12 +14,12 @@ import core.Punish;
 import core.Punish.BroadcastType;
 import core.commads.MuteCommand.PlayerInfo;
 
-public class UnmuteCommand extends Command {
+public class UnbanCommand extends Command {
 	
 	private Punish core;
 	
-	public UnmuteCommand(Punish core) {
-		super("unmute");
+	public UnbanCommand(Punish core) {
+		super("unban");
 		this.core = core;
 	}
 
@@ -30,8 +30,8 @@ public class UnmuteCommand extends Command {
 			return;
 		}
 		if (args == null || args.length == 0) {
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "/unmute (Player)");
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /unmute Snick");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "/unban (Player)");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /unban Snick");
             return;
 		}
 		
@@ -55,18 +55,15 @@ public class UnmuteCommand extends Command {
 				}
 			}
 			if (playerUUID != null) {
-				if (this.core.muteFactory.isPlayerMutedInDatabase(playerUUID)) {
-					this.core.muteFactory.unmutePlayer(playerUUID);
-					if (core.getProxy().getPlayer(playerUUID)!=null) {
-						core.broadcastToPlayer(BroadcastType.WARN, playerUUID, "You have been unmuted!");
-					}
-					core.broadcastToPlayer(BroadcastType.INFO, player, "Player has been unmuted.");	
+				if (this.core.banFactory.isBanned(playerUUID)) {
+					this.core.banFactory.removeBan(playerUUID);
+					core.broadcastToPlayer(BroadcastType.INFO, player, "Player has been unbanned.");	
 				} else {
-					core.broadcastToPlayer(BroadcastType.ERROR, player, "Player is already unmuted.");
+					core.broadcastToPlayer(BroadcastType.ERROR, player, "Player is not banned!");
 				}
 				
 			} else {
-				core.broadcastToPlayer(BroadcastType.ERROR, player, "Error unmuting player!");
+				core.broadcastToPlayer(BroadcastType.ERROR, player, "Error unbanning player!");
 			}
 			
 		} else {

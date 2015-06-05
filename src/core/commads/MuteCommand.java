@@ -5,14 +5,12 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.UUID;
 
-import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 
 import core.Punish;
 import core.Punish.BroadcastType;
 import core.utils.ActiveMute;
 import net.md_5.bungee.api.CommandSender;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 

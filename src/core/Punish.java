@@ -1,6 +1,5 @@
 package core;
 
-import java.awt.Window.Type;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,15 +27,19 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
+import core.commads.BanCommand;
 import core.commads.MuteCommand;
 import core.commads.StaffChatCommand;
+import core.commads.UnbanCommand;
 import core.commads.UnmuteCommand;
 import core.commads.MuteCommand.PlayerInfo;
+import core.factories.BanFactory;
 import core.factories.CooldownFactory;
 import core.factories.FilterFactory;
 import core.factories.MuteFactory;
 import core.utils.ActiveMute;
 import core.utils.ChatMessage;
+import core.utils.PlayerBan;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -53,14 +56,27 @@ public class Punish extends Plugin implements Listener {
 	public static MongoClient mongoClient;
 	
 	private DB minehutDB;
-	
-	public DBCollection playerMutes;
-	
+	public java.text.DecimalFormat nft = new java.text.DecimalFormat("#00.###");
+	public DBCollection playerMutes, playerBans, ipBans;
 	public MuteFactory muteFactory;
+	
+	public BanFactory banFactory;
 	
 	public FilterFactory filterFactory;
 	
 	public CooldownFactory cooldownFactory;
+	
+	public static Gson gson;
+	
+	static {
+		gson = new Gson();
+	}
+	
+	public String formatTimeFromSeconds(int seconds) {
+		int trueseconds = seconds % 60;
+		int minutes = seconds / 60;
+		return (minutes<=0?"":nft.format(minutes) + "m ") + nft.format(trueseconds) + "s";
+	}
 	
 	@Override
 	public void onEnable() {
@@ -68,10 +84,13 @@ public class Punish extends Plugin implements Listener {
 		this.getProxy().getPluginManager().registerCommand(this, new MuteCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new UnmuteCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this));
+		this.getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
+		this.getProxy().getPluginManager().registerCommand(this, new UnbanCommand(this));
 		this.connect();
 		this.cooldownFactory = new CooldownFactory();
 		this.filterFactory = new FilterFactory();
 		this.muteFactory = new MuteFactory(this);
+		this.banFactory = new BanFactory(this);
 		
 		getProxy().getScheduler().schedule(this, new Runnable() {
 		    @Override
@@ -80,7 +99,6 @@ public class Punish extends Plugin implements Listener {
 		    	synchronized(list) {
 		    		Iterator<ActiveMute> i = list.iterator();
 		    		while (i.hasNext()) {
-		    			
 		    			ActiveMute mute = i.next();
 		    			if (mute.expired()) {
 		    				playerMutes.remove(new BasicDBObject("uuid", mute.playerUUID));
@@ -103,6 +121,8 @@ public class Punish extends Plugin implements Listener {
 					mongoClient = new MongoClient("127.0.0.1", 27017); //27017
 					minehutDB = mongoClient.getDB("minehut");
 					playerMutes = minehutDB.getCollection("playermutes");
+					playerBans = minehutDB.getCollection("playerbans");
+					ipBans = minehutDB.getCollection("ipbans");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -113,7 +133,7 @@ public class Punish extends Plugin implements Listener {
 	}
 	
 	public MongoClient getMonogClient() {
-		return this.mongoClient;
+		return Punish.mongoClient;
 	}
 	
 	public enum BroadcastType {
@@ -210,6 +230,29 @@ public class Punish extends Plugin implements Listener {
 					e.printStackTrace();
 				}
 				if (playerUUID!=null) {
+					
+					if (banFactory.isBanned(playerUUID)) {
+						PlayerBan ban = banFactory.getPlayerBan(playerUUID);
+						if (ban.expired()) {
+							banFactory.removeBan(playerUUID);
+						} else {
+							TextComponent text = new TextComponent("You have been banned by ");// + sender.getName() + " for " + args[1] + "\n\rReason: " + reason);
+							text.setBold(true);
+							TextComponent staff = new TextComponent(ban.staff);
+							staff.setBold(true);
+							staff.setColor(ChatColor.RED);
+							text.addExtra(staff);
+							TextComponent time = new TextComponent("\r\nReason:" + ban.reason + "\r\nTime Left: " + formatTimeFromSeconds(ban.length - (int)Punish.getSecondsFromDate(new Date(ban.start))));
+							time.setBold(true);
+							time.setColor(ChatColor.WHITE);
+							text.addExtra(time);
+							event.getConnection().disconnect(text);
+							return;
+						}
+					}
+					
+					
+					
 					if (muteFactory.isPlayerMutedInDatabase(playerUUID)) {
 						DBObject obj = playerMutes.findOne(new BasicDBObject("uuid", playerUUID));
 						
@@ -236,10 +279,6 @@ public class Punish extends Plugin implements Listener {
 			
 			
 		});
-		
-		
-		
-		
 		//event.completeIntent(this);
 	}
 	
