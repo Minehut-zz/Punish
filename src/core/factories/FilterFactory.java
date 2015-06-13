@@ -11,7 +11,8 @@ public class FilterFactory {
 	private final String safeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890-=`\\~!@#$%^&*()_+[]{};':\",.<>/? ";
 	
 	private final ArrayList<String> blackList = 
-			new ArrayList<String>(Arrays.asList("http://", "https://", "www.", ".com", ".org", ".net", ".co", ".uk", ".webs.com", ".tv")); //TODO: load more from SQL?
+			new ArrayList<String>(Arrays.asList("http://", "https://", "www.", ".com", ".org", ".net", ".co", ".uk", ".webs.com", ".tv",
+												"fuck", "cunt", "ass", "bitch", "dick", "shit", "faggot", "fag")); //TODO: load more from SQL?
 	
 	public boolean safeMessage(String message) {
 		char[] messageChars = message.toCharArray();

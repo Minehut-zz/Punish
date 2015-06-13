@@ -19,7 +19,7 @@ public class MuteCommand extends Command {
 	private Punish core;
 	
 	public MuteCommand(Punish core) {
-		super("mute");
+		super("gmute");
 		this.core = core;
 	}
  
@@ -43,8 +43,8 @@ public class MuteCommand extends Command {
 		@Override
 		public void run() {
 			if (args == null || args.length == 0) {
-				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "/mute (Player) (Time) (Reason)");
-				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "Example: /mute Snick 10m Please don't spam");
+				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "/gmute (Player) (Time) (Reason)");
+				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "Example: /gmute Snick 10m Please don't spam");
 	            return;
 			}
 			
@@ -111,10 +111,10 @@ public class MuteCommand extends Command {
 				if (pPlayer!=null) {
 					core.broadcastToPlayer(BroadcastType.WARN, pPlayer, "You have been muted by " + commandSender.getName() + " for " + args[1]);
 				}
-				core.broadcastToPlayer(BroadcastType.INFO, this.player, "Player " + args[0] + " has been muted!");
+				core.broadcastToStaff(BroadcastType.INFO, "Player " + args[0] + " has been muted!");
 			} else {
-				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "/mute (Player) (Time) (Reason)");
-				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "Example: /mute Snick 10m Please don't spam");
+				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "/gmute (Player) (Time) (Reason)");
+				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "Example: /gmute Snick 10m Please don't spam");
 	            return;
 			}
 		}

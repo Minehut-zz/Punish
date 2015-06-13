@@ -22,7 +22,7 @@ public class BanCommand extends Command {
 	private Punish core;
 	
 	public BanCommand(Punish core) {
-		super("ban");
+		super("gban");
 		this.core = core;
 	}
 
@@ -33,8 +33,8 @@ public class BanCommand extends Command {
 			return;
 		}
 		if (args == null || args.length == 0) {
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "/ban (Player) (Time) (Reason)");
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /ban Snick 10m Please don't spam");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "/gban (Player) (Time) (Reason)");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /gban Snick 10m Please don't spam");
             return;
 		}
 		
@@ -73,7 +73,10 @@ public class BanCommand extends Command {
 				banTimeInSeconds = Integer.parseInt(args[1].replace("m", "")) * 60;
 			} else 
 			if (args[1].contains("h")) {
-				banTimeInSeconds = (Integer.parseInt(args[1].replace("h", "")) * 24) * 60;
+				banTimeInSeconds = (Integer.parseInt(args[1].replace("h", "")) * 60) * 60;
+			} else
+			if (args[1].contains("d")) {
+				banTimeInSeconds = ((Integer.parseInt(args[1].replace("d", "")) * 24) * 60) * 60;
 			}
 			if (banTimeInSeconds <= 0) {
 				core.broadcastToPlayer(BroadcastType.ERROR, player, "Please input a proper time format! (20m, 3h)");
@@ -113,7 +116,7 @@ public class BanCommand extends Command {
 				staff.setBold(true);
 				staff.setColor(ChatColor.RED);
 				text.addExtra(staff);
-				TextComponent time = new TextComponent(" for " + core.formatTimeFromSeconds(banTimeInSeconds) + "\r\n" + reason);
+				TextComponent time = new TextComponent(" for " + core.formatTimeFromSeconds(banTimeInSeconds) + "\r\nReason:" + reason);
 				time.setBold(true);
 				time.setColor(ChatColor.WHITE);
 				text.addExtra(time);
@@ -122,10 +125,10 @@ public class BanCommand extends Command {
 				pPlayer.getPendingConnection().disconnect(text);
 				//core.broadcastToPlayer(BroadcastType.WARN, pPlayer, "You have been muted by " + sender.getName() + " for " + args[1]);
 			}
-			core.broadcastToPlayer(BroadcastType.INFO, player, "Player " + args[0] + " has been banned!");
+			core.broadcastToStaff(BroadcastType.INFO, "Player " + args[0] + " has been banned!");
 		} else {
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "/ban (Player) (Time) (Reason)");
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /ban Snick 10m Please don't spam");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "/gban (Player) (Time) (Reason)");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /gban Snick 10m Please don't spam");
             return;
 		}
 		

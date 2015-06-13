@@ -19,7 +19,7 @@ public class UnbanCommand extends Command {
 	private Punish core;
 	
 	public UnbanCommand(Punish core) {
-		super("unban");
+		super("gunban");
 		this.core = core;
 	}
 
@@ -30,8 +30,8 @@ public class UnbanCommand extends Command {
 			return;
 		}
 		if (args == null || args.length == 0) {
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "/unban (Player)");
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /unban Snick");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "/gunban (Player)");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /gunban Snick");
             return;
 		}
 		

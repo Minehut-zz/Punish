@@ -19,7 +19,7 @@ public class UnmuteCommand extends Command {
 	private Punish core;
 	
 	public UnmuteCommand(Punish core) {
-		super("unmute");
+		super("gunmute");
 		this.core = core;
 	}
 
@@ -30,8 +30,8 @@ public class UnmuteCommand extends Command {
 			return;
 		}
 		if (args == null || args.length == 0) {
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "/unmute (Player)");
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /unmute Snick");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "/gunmute (Player)");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /gunmute Snick");
             return;
 		}
 		

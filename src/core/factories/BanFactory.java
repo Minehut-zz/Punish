@@ -22,6 +22,7 @@ public class BanFactory {
 		DBObject obj = new BasicDBObject("uuid", ban.playerUUID);
 		obj.put("playerBan", Punish.gson.toJson(ban));
 		this.core.playerBans.insert(obj);
+		this.core.banLogs.insert(obj);
 	}
 	
 	public void removeBan(UUID uuid) {

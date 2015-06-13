@@ -30,6 +30,7 @@ public class MuteFactory {
 		obj.put("reason", activeMute.reason);
 		obj.put("staff", activeMute.staff);
 		this.core.playerMutes.insert(obj);
+		this.core.muteLogs.insert(obj);
 	}
 	
 	public void unmutePlayer(UUID uuid) {

@@ -11,7 +11,7 @@ public class StaffChatCommand extends Command {
 	private Punish core;
 	
 	public StaffChatCommand(Punish core) {
-		super("sc");
+		super("s");
 		this.core = core;
 	}
 
@@ -22,8 +22,8 @@ public class StaffChatCommand extends Command {
 			return;
 		}
 		if (args == null || args.length == 0) {
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "/sc (Message)");
-			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /sc I need help!");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "/s (Message)");
+			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /s I need help!");
             return;
 		}
 		

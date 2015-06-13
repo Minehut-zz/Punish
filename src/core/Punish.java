@@ -40,12 +40,14 @@ import core.factories.MuteFactory;
 import core.utils.ActiveMute;
 import core.utils.ChatMessage;
 import core.utils.PlayerBan;
+import core.utils.Rank;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
 import net.md_5.bungee.api.event.ChatEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.PreLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -57,7 +59,7 @@ public class Punish extends Plugin implements Listener {
 	
 	private DB minehutDB;
 	public java.text.DecimalFormat nft = new java.text.DecimalFormat("#00.###");
-	public DBCollection playerMutes, playerBans, ipBans;
+	public DBCollection playerMutes, playerBans, ipBans, players, muteLogs, banLogs;
 	public MuteFactory muteFactory;
 	
 	public BanFactory banFactory;
@@ -123,6 +125,9 @@ public class Punish extends Plugin implements Listener {
 					playerMutes = minehutDB.getCollection("playermutes");
 					playerBans = minehutDB.getCollection("playerbans");
 					ipBans = minehutDB.getCollection("ipbans");
+					players = minehutDB.getCollection("players");
+					muteLogs = minehutDB.getCollection("mutelogs");
+					banLogs = minehutDB.getCollection("banlogs");
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -132,6 +137,24 @@ public class Punish extends Plugin implements Listener {
 		
 	}
 	
+	private boolean onlineMode = true;
+    public Rank getRank(UUID uuid) {
+        if(onlineMode) {
+            DBObject r = new BasicDBObject("uuid", uuid.toString());
+            DBObject found = players.findOne(r);
+
+            if (found != null) {
+                String rankName = (String) found.get("rank");
+                return Rank.getRank(rankName);
+            } else {
+            /* Player not found, return default */
+                return Rank.regular;
+            }
+        } else {
+            return Rank.regular;
+        }
+    }
+    
 	public MongoClient getMonogClient() {
 		return Punish.mongoClient;
 	}
@@ -209,14 +232,45 @@ public class Punish extends Plugin implements Listener {
 	@EventHandler
 	public void onLeave(PlayerDisconnectEvent event) {
 		this.muteFactory.removePlayer(event.getPlayer().getUniqueId());
+		this.cooldownFactory.removeLastMessage(event.getPlayer().getUniqueId());
 	}
+	
+	@EventHandler
+	public void onLogin(final PostLoginEvent event) {
+		
+		this.getProxy().getScheduler().runAsync(this, new Runnable() {
+			@Override
+			public void run() {
+				if (getRank(event.getPlayer().getUniqueId()).equals(Rank.Mod)) {
+					setModPerms(event.getPlayer());
+				} else
+				if (getRank(event.getPlayer().getUniqueId()).equals(Rank.Manager)||
+					getRank(event.getPlayer().getUniqueId()).equals(Rank.Admin) ||
+					getRank(event.getPlayer().getUniqueId()).equals(Rank.Dev) ||
+					getRank(event.getPlayer().getUniqueId()).equals(Rank.Owner)) {
+					setAdminPerms(event.getPlayer());
+				}
+			}
+		});
+	}
+	
+	public void setModPerms(ProxiedPlayer player) {
+		player.setPermission("minehut.mod", true);
+		player.setPermission("bungeecord.command.send", true);
+		player.setPermission("bungeecord.command.server", true);
+		player.setPermission("bungeecord.command.find", true);
+	}
+	
+	public void setAdminPerms(ProxiedPlayer player) {
+		this.setModPerms(player);
+		player.setPermission("bungeecord.command.alert", true);
+	}
+	
 
 	@EventHandler
 	public void onLogin(final PreLoginEvent event) {
 		//event.registerIntent(this);
-		
 		this.getProxy().getScheduler().runAsync(this, new Runnable() {
-			Gson gson = new Gson();
 			@Override
 			public void run() {
 				UUID playerUUID = null;
@@ -230,7 +284,6 @@ public class Punish extends Plugin implements Listener {
 					e.printStackTrace();
 				}
 				if (playerUUID!=null) {
-					
 					if (banFactory.isBanned(playerUUID)) {
 						PlayerBan ban = banFactory.getPlayerBan(playerUUID);
 						if (ban.expired()) {
@@ -250,34 +303,19 @@ public class Punish extends Plugin implements Listener {
 							return;
 						}
 					}
-					
-					
-					
 					if (muteFactory.isPlayerMutedInDatabase(playerUUID)) {
 						DBObject obj = playerMutes.findOne(new BasicDBObject("uuid", playerUUID));
-						
 						ActiveMute mute = new ActiveMute();
-						
 						mute.playerUUID = playerUUID;
 						mute.lengthSeconds = (int)obj.get("lengthSeconds");
 						mute.start = (long)obj.get("start");
 						mute.reason = (String)obj.get("reason");
 						mute.staff = (String)obj.get("staff");
 						muteFactory.activeMutes.add(mute);
-						
-						
-						
-						System.out.println("Old mute from database found: " + mute.toString() + " " + muteFactory.activeMutes.size());
-						//if (mute!=null) {
-						
-						//}
-						
 					}
 				}
 				
 			}
-			
-			
 		});
 		//event.completeIntent(this);
 	}
@@ -314,10 +352,12 @@ public class Punish extends Plugin implements Listener {
 				if (chatMessage.getSecondsFromSent()<=1) {
 					this.broadcastToPlayer(BroadcastType.INFO, player, "Please slow down with your chat!");
 					event.setCancelled(true);
+					return;
 				} else
 				if (chatMessage.message.equalsIgnoreCase(event.getMessage())) {
 					this.broadcastToPlayer(BroadcastType.INFO, player, "Please do not send the same message twice!");
 					event.setCancelled(true);
+					return;
 				}
 			}
 			this.cooldownFactory.setLastMessage(player.getUniqueId(), event.getMessage());
