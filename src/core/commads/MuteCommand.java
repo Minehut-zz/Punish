@@ -112,6 +112,11 @@ public class MuteCommand extends Command {
 					core.broadcastToPlayer(BroadcastType.WARN, pPlayer, "You have been muted by " + commandSender.getName() + " for " + args[1]);
 				}
 				core.broadcastToStaff(BroadcastType.INFO, "Player " + args[0] + " has been muted!");
+				core.broadcastToStaff(BroadcastType.INFO, "Punisher: " + commandSender.getName());
+				core.broadcastToStaff(BroadcastType.INFO, "Length: " + args[1]);
+				core.broadcastToStaff(BroadcastType.INFO, "Reason: " + reason);
+				
+				
 			} else {
 				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "/gmute (Player) (Time) (Reason)");
 				core.broadcastToPlayer(BroadcastType.ERROR, this.player, "Example: /gmute Snick 10m Please don't spam");

@@ -28,6 +28,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
 import core.commads.BanCommand;
+import core.commads.KickCommand;
 import core.commads.MuteCommand;
 import core.commads.StaffChatCommand;
 import core.commads.UnbanCommand;
@@ -88,6 +89,7 @@ public class Punish extends Plugin implements Listener {
 		this.getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new UnbanCommand(this));
+		this.getProxy().getPluginManager().registerCommand(this, new KickCommand(this));
 		this.connect();
 		this.cooldownFactory = new CooldownFactory();
 		this.filterFactory = new FilterFactory();

@@ -126,6 +126,10 @@ public class BanCommand extends Command {
 				//core.broadcastToPlayer(BroadcastType.WARN, pPlayer, "You have been muted by " + sender.getName() + " for " + args[1]);
 			}
 			core.broadcastToStaff(BroadcastType.INFO, "Player " + args[0] + " has been banned!");
+			core.broadcastToStaff(BroadcastType.INFO, "Punisher: " + sender.getName());
+			core.broadcastToStaff(BroadcastType.INFO, "Length: " + args[1]);
+			core.broadcastToStaff(BroadcastType.INFO, "Reason: " + reason);
+			
 		} else {
 			core.broadcastToPlayer(BroadcastType.ERROR, player, "/gban (Player) (Time) (Reason)");
 			core.broadcastToPlayer(BroadcastType.ERROR, player, "Example: /gban Snick 10m Please don't spam");
