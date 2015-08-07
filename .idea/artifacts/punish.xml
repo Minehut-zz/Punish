@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="punish">
+    <output-path>$USER_HOME$/minehut/output</output-path>
+    <root id="archive" name="punish.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/src/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="Punish" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/plugin.yml" />
+    </root>
+  </artifact>
+</component>

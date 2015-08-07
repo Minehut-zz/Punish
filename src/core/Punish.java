@@ -27,12 +27,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 
-import core.commads.BanCommand;
-import core.commads.KickCommand;
-import core.commads.MuteCommand;
-import core.commads.StaffChatCommand;
-import core.commads.UnbanCommand;
-import core.commads.UnmuteCommand;
+import core.commads.*;
 import core.commads.MuteCommand.PlayerInfo;
 import core.factories.BanFactory;
 import core.factories.CooldownFactory;
@@ -86,7 +81,7 @@ public class Punish extends Plugin implements Listener {
 		this.getProxy().getPluginManager().registerListener(this, this);
 		this.getProxy().getPluginManager().registerCommand(this, new MuteCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new UnmuteCommand(this));
-		this.getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this));
+//		this.getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new BanCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new UnbanCommand(this));
 		this.getProxy().getPluginManager().registerCommand(this, new KickCommand(this));
@@ -162,7 +157,7 @@ public class Punish extends Plugin implements Listener {
 	}
 	
 	public enum BroadcastType {
-		INFO("&9&lInfo"), WARN("&e&lWarn"), ERROR("&4&lError"), MSG("&a&lMSG"), STAFF("&b&lStaff");
+		INFO("[" + ChatColor.DARK_RED + "PUNISH" + ChatColor.WHITE + "]"), WARN("[" + ChatColor.DARK_RED + "WARN" + ChatColor.WHITE + "]"), ERROR("[" + ChatColor.DARK_RED + "ERROR" + ChatColor.WHITE + "]"), MSG("&a&lMSG"), STAFF("[" + ChatColor.GOLD + "STAFF" + ChatColor.WHITE + "]");
 		private String type;
 		private BroadcastType(String s) {
 			this.type = s;
@@ -177,16 +172,22 @@ public class Punish extends Plugin implements Listener {
 			player.sendMessage(this.formatMessage(type, message));
 		}
 	}
-	
-	public TextComponent formatMessage(BroadcastType type, String message) {
-		TextComponent text = new TextComponent(type.getType().replaceAll("&", "ง") + "> ");
-		TextComponent textMessage = new TextComponent(message);
-		textMessage.setColor((type==BroadcastType.STAFF)?ChatColor.AQUA:ChatColor.LIGHT_PURPLE);
-		//textMessage.setBold(true);
-		
-		text.addExtra(textMessage);
-		return text;
+
+	public String formatMessage(BroadcastType type, String message) {
+		return type.getType() + " " + message;
 	}
+	
+//	public TextComponent formatMessage(BroadcastType type, String message) {
+//		TextComponent text = new TextComponent(type.getType().replaceAll("&", "ยง") + " ");
+//		TextComponent textMessage = new TextComponent(message);
+//		textMessage.setColor((type==BroadcastType.STAFF)?ChatColor.AQUA:ChatColor.LIGHT_PURPLE);
+//		//textMessage.setBold(true);
+//
+//
+//
+//		text.addExtra(textMessage);
+//		return text;
+//	}
 	
 	public void broadcastToPlayer(BroadcastType type, UUID uuid, String message) {
 		this.broadcastToPlayer(type, this.getProxy().getPlayer(uuid), message);

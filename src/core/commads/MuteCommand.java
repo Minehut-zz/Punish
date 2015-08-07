@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import core.Punish;
 import core.Punish.BroadcastType;
 import core.utils.ActiveMute;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
@@ -55,7 +56,7 @@ public class MuteCommand extends Command {
 					pPlayer = core.getProxy().getPlayer(args[0]);
 					playerUUID = pPlayer.getUniqueId();
 				} else {
-					core.broadcastToPlayer(BroadcastType.INFO, this.player, "That player is not online or that name is not valid!");
+//					core.broadcastToPlayer(BroadcastType.INFO, this.player, "That player is not online or that name is not valid!");
 					//playerUUID = UUID.nameUUIDFromBytes(("OfflinePlayer:" + args[0]).getBytes(Charsets.UTF_8));
 					try {
 						BufferedReader in = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/users/profiles/minecraft/" + args[0]).openStream()));
@@ -105,16 +106,17 @@ public class MuteCommand extends Command {
 				newMute.playerUUID = playerUUID;
 				newMute.reason = reason;
 				newMute.staff = commandSender.getName();
-				core.muteFactory.mutePlayer(newMute, (pPlayer!=null)); 
+				core.muteFactory.mutePlayer(newMute, (pPlayer != null));
 					
 				System.out.println(newMute.toString());
 				if (pPlayer!=null) {
 					core.broadcastToPlayer(BroadcastType.WARN, pPlayer, "You have been muted by " + commandSender.getName() + " for " + args[1]);
 				}
-				core.broadcastToStaff(BroadcastType.INFO, "Player " + args[0] + " has been muted!");
-				core.broadcastToStaff(BroadcastType.INFO, "Punisher: " + commandSender.getName());
-				core.broadcastToStaff(BroadcastType.INFO, "Length: " + args[1]);
-				core.broadcastToStaff(BroadcastType.INFO, "Reason: " + reason);
+
+				core.broadcastToStaff(BroadcastType.INFO, ChatColor.YELLOW + args[0] + ChatColor.WHITE + " was muted!");
+				core.broadcastToStaff(BroadcastType.INFO, ChatColor.GRAY + "Staff: " + ChatColor.AQUA + commandSender.getName());
+				core.broadcastToStaff(BroadcastType.INFO, ChatColor.GRAY + "Length: " + ChatColor.YELLOW + args[1]);
+				core.broadcastToStaff(BroadcastType.INFO, ChatColor.GRAY + "Reason: " + ChatColor.YELLOW + reason);
 				
 				
 			} else {

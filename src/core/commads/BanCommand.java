@@ -45,7 +45,7 @@ public class BanCommand extends Command {
 				pPlayer = core.getProxy().getPlayer(args[0]);
 				playerUUID = pPlayer.getUniqueId();
 			} else {
-				core.broadcastToPlayer(BroadcastType.INFO, player, "That player is not online or that name is not valid!");
+//				core.broadcastToPlayer(BroadcastType.INFO, player, "That player is not online or that name is not valid!");
 				//playerUUID = UUID.nameUUIDFromBytes(("OfflinePlayer:" + args[0]).getBytes(Charsets.UTF_8));
 				try {
 					BufferedReader in = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/users/profiles/minecraft/" + args[0]).openStream()));
@@ -125,10 +125,10 @@ public class BanCommand extends Command {
 				pPlayer.getPendingConnection().disconnect(text);
 				//core.broadcastToPlayer(BroadcastType.WARN, pPlayer, "You have been muted by " + sender.getName() + " for " + args[1]);
 			}
-			core.broadcastToStaff(BroadcastType.INFO, "Player " + args[0] + " has been banned!");
-			core.broadcastToStaff(BroadcastType.INFO, "Punisher: " + sender.getName());
-			core.broadcastToStaff(BroadcastType.INFO, "Length: " + args[1]);
-			core.broadcastToStaff(BroadcastType.INFO, "Reason: " + reason);
+			core.broadcastToStaff(BroadcastType.INFO, ChatColor.YELLOW + args[0] + ChatColor.WHITE + " was banned!");
+			core.broadcastToStaff(BroadcastType.INFO, ChatColor.GRAY + "Staff: " + ChatColor.AQUA + sender.getName());
+			core.broadcastToStaff(BroadcastType.INFO, ChatColor.GRAY + "Length: " + ChatColor.YELLOW + args[1]);
+			core.broadcastToStaff(BroadcastType.INFO, ChatColor.GRAY + "Reason: " + ChatColor.YELLOW + reason);
 			
 		} else {
 			core.broadcastToPlayer(BroadcastType.ERROR, player, "/gban (Player) (Time) (Reason)");

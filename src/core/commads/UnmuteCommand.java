@@ -42,7 +42,7 @@ public class UnmuteCommand extends Command {
 				pPlayer = core.getProxy().getPlayer(args[0]);
 				playerUUID = pPlayer.getUniqueId();
 			} else {
-				core.broadcastToPlayer(BroadcastType.INFO, player, "That player is not online or that name is not valid!");
+//				core.broadcastToPlayer(BroadcastType.INFO, player, "That player is not online or that name is not valid!");
 				//playerUUID = UUID.nameUUIDFromBytes(("OfflinePlayer:" + args[0]).getBytes(Charsets.UTF_8));
 				try {
 					BufferedReader in = new BufferedReader(new InputStreamReader(new URL("https://api.mojang.com/users/profiles/minecraft/" + args[0]).openStream()));
